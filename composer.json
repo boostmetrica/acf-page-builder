@@ -6,8 +6,5 @@
       "name": "Michael James",
       "email": "michael@boostmetrica.com"
     }
-  ],
-  "require": {
-    "vinkla/extended-acf": "^14"
-  }
+  ]
 }
