@@ -1,0 +1,13 @@
+{
+  "name": "boost-dev/acf-page-builder",
+  "type": "wordpress-plugin",
+  "authors": [
+    {
+      "name": "Michael James",
+      "email": "michael@boostmetrica.com"
+    }
+  ],
+  "require": {
+    "vinkla/extended-acf": "^14"
+  }
+}

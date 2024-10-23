@@ -1,0 +1,66 @@
+.boo-acf-pb-activated .acf-button[data-name="add-layout"] {
+  max-height: 0px;
+  overflow: hidden;
+  min-height: initial;
+  border: none;
+}
+
+.boo-acf-pb-layout-image-preview {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(23, 23, 23, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.boo-acf-pb-layout-image-preview img {
+  max-width: 80vw;
+  max-height: 80vh;
+  display: block;
+}
+
+.boo-acf-pb-layout-image-preview-active .boo-acf-pb-layout-image-preview {
+  display: flex;
+}
+
+.boo-acf-pb-layout-image-preview-button {
+  display: inline-block;
+  border: none;
+  padding: 0;
+  background-color: transparent;
+  margin-left: 7px;
+  cursor: pointer;
+  opacity: 0.4;
+  font-size: 15px;
+  transform: translateY(2px);
+  z-index: 10;
+}
+
+.boo-acf-pb-layout-image-preview-button:hover {
+  opacity: 1;
+}
+
+.boo-acf-pb-layout-picker {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.boo-acf-pb-layout-picker-buttons button {
+  padding: 10px;
+}
+
+.boo-acf-pb-layout-picker-preview img {
+  display: none;
+  max-width: 100%;
+  width: 100%;
+  height: 400px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  -o-object-position: top right;
+  object-position: top right;
+}
