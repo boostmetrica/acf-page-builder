@@ -55,6 +55,18 @@ function boo_acf_pb_render_pre( $field ) {
 
 add_filter('acf/render_field/type=flexible_content', 'boo_acf_pb_render_post', 11, 1);
 function boo_acf_pb_render_post( $field ) {
+  // only render for superadmins
+  if (!current_user_can("do_superadmin_stuff")) {
+    echo "<style>
+    .acf-fc-layout-controls .-plus,
+    .acf-fc-layout-controls .-duplicate,
+    .acf-fc-layout-controls .-minus {
+      display: none !important;
+    }
+    </style>";
+    echo '</div>';
+    return;
+  }
 
     echo '<div class="boo-acf-pb-layout-picker">';
     echo '<div class="boo-acf-pb-layout-picker-buttons">';
@@ -72,6 +84,22 @@ function boo_acf_pb_render_post( $field ) {
     }
     echo '</div>';
     echo '</div>';
+    ?>
+<div>
+  <p>Presets</p>
+  <button data-preset="post_grid--masonry,post_grid--minimal,post_grid--excerpt,faqs">Test</button>
+  <button
+    data-preset="hero,services_grid,testimonials_carousel,case_studies_accordion,text_feature,post_grid--masonry,faqs">Home</button>
+  <button
+    data-preset="page_intro,service_tabs,callout,text_carousel,two_column_text_carousel,related_case_studies,faqs">Service</button>
+  <button data-preset="featured_case_study,post_grid">Case Study Landing</button>
+  <button data-preset="page_intro,two_column_text,quote,timeline,testimonials_carousel,featured_article,post_grid">About
+    Us</button>
+  <button data-preset="page_intro,post_grid">Blog Landing</button>
+  <button data-preset="contact_us">Contact Us</button>
+</div>
+<?php
+
     echo '</div>';
 
 
@@ -80,18 +108,18 @@ function boo_acf_pb_render_post( $field ) {
 
 
 /** ------------ sub options page ------------ **/
-add_action('acf/init', 'acf_page_builder_options_page', 105);
-function acf_page_builder_options_page() {
-  if( function_exists('acf_add_options_sub_page') ) {
+// to configure images and tagging once we dont hard code them
+// add_action('acf/init', 'acf_page_builder_options_page', 105);
+// function acf_page_builder_options_page() {
+//   if( function_exists('acf_add_options_sub_page') ) {
 
 
-    acf_add_options_sub_page(array(
-      'page_title'  => 'Page Builder',
-      'menu_title'  => 'Page Builder',
-      'parent_slug' => 'edit.php?post_type=acf-field-group',
-      // 'parent_slug' => 'more-content',
-      'capability'  => 'edit_posts',
-    ));
-  }
-
-}
+//     acf_add_options_sub_page(array(
+//       'page_title'  => 'Page Builder',
+//       'menu_title'  => 'Page Builder',
+//       'parent_slug' => 'edit.php?post_type=acf-field-group',
+//       // 'parent_slug' => 'more-content',
+//       'capability'  => 'do_superadmin_stuff',
+//     ));
+//   }
+// }
