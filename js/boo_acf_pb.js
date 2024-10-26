@@ -15,6 +15,182 @@ function unsecuredCopyToClipboard(text) {
 jQuery(function ($) {
   let awaitingVariant = null;
 
+  const selectLayout = ($layout) => {
+    const layout = $layout.data("layout");
+    const label = $layout.text();
+
+    // clear previous preview
+    $(".layout-picker-previews img.selected").removeClass("selected");
+    // select new preview
+    $(".layout-picker-previews img[data-layout='" + layout + "']").addClass(
+      "selected"
+    );
+
+    // clear previous selected
+    $(".layout-picker-item.selected").removeClass("selected");
+    // select new selected
+    $(".layout-picker-item[data-layout='" + layout + "']").addClass("selected");
+
+    // update the add button text
+    $(".boo-acf-pb-layout-picker-modal .button[data-add-layout]").text(
+      "Add " + label + " layout"
+    );
+  };
+
+  $(".layout-picker-item").on("click", function (e) {
+    e.preventDefault();
+    selectLayout($(this));
+  });
+
+  // preview on hover
+  $(".layout-picker-item")
+    .on("mouseenter", function () {
+      const layout = $(this).data("layout");
+
+      // if this isn't the selected img add hide-while-previewing to selected
+      if (!$(this).hasClass("selected")) {
+        $(".layout-picker-previews img.selected").addClass(
+          "hide-while-previewing"
+        );
+        $(".preview-text").show();
+      }
+
+      $(".layout-picker-previews img.previewing").removeClass("previewing");
+      $(".layout-picker-previews img[data-layout='" + layout + "']").addClass(
+        "previewing"
+      );
+    })
+    .on("mouseleave", function () {
+      $(".layout-picker-previews img.previewing").removeClass("previewing");
+
+      // remove hide-while-previewing class
+      $(".layout-picker-previews img").removeClass("hide-while-previewing");
+      $(".preview-text").hide();
+    });
+
+  $(".boo-acf-pb-layout-picker-modal .button[data-add-layout]").on(
+    "click",
+    function (e) {
+      e.preventDefault();
+      const layout = $(".layout-picker-item.selected").data("layout");
+      addLayout(layout);
+      $(".boo-acf-pb-layout-picker-container").hide();
+    }
+  );
+
+  $("[data-layout-picker-open]").on("click", function (e) {
+    e.preventDefault();
+    $(".boo-acf-pb-layout-picker-container").css("display", "flex");
+    // focus search
+    $("[data-layout-picker-search]").focus();
+  });
+
+  const filterLayouts = (search) => {
+    // hide all layouts not matching search
+    $(".layout-picker-item").each(function () {
+      const label = $(this).text().toLowerCase();
+      if (label.includes(search)) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+    // select the first visible layout
+    const $selected = $(".layout-picker-item:visible").first();
+    selectLayout($selected);
+  };
+
+  const showAllLayouts = () => {
+    $(".layout-picker-item").show();
+    // select the first layout
+    const $selected = $(".layout-picker-item").first();
+    selectLayout($selected);
+    hideSearchTip();
+  };
+
+  $("[data-layout-picker-search]").on("input", function (event) {
+    // prevent default form submission
+    event.preventDefault();
+
+    const search = $(this).val().toLowerCase();
+    if (search) {
+      filterLayouts(search);
+      showSearchTip();
+    } else {
+      showAllLayouts();
+    }
+  });
+
+  const showSearchTip = () => {
+    $(".boo-acf-pb-layout-picker-modal").addClass("--show-tip");
+  };
+
+  const hideSearchTip = () => {
+    $(".boo-acf-pb-layout-picker-modal").removeClass("--show-tip");
+  };
+
+  // if up and down arrow keys are pressed in the search input
+  // then select the next or previous layout
+  $("[data-layout-picker-search]").on("keydown", function (e) {
+    const key = e.which;
+    if (key === 38 || key === 40) {
+      e.preventDefault();
+      const $selected = $(".layout-picker-item.selected");
+      const $visible = $(".layout-picker-item:visible");
+      const index = $visible.index($selected);
+      let nextIndex = index + 1;
+      if (key === 38) {
+        nextIndex = index - 1;
+      }
+      if (nextIndex < 0) {
+        return;
+      }
+      if (nextIndex >= $visible.length) {
+        return;
+      }
+      const $next = $visible.eq(nextIndex);
+      selectLayout($next);
+    }
+  });
+
+  // if escape key is pressed close the modal
+  $(document).on("keydown", function (e) {
+    if (e.which === 27) {
+      $("[data-layout-picker-search]").val("");
+      showAllLayouts();
+      $(".boo-acf-pb-layout-picker-container").hide();
+      // clear search
+    }
+  });
+
+  // if enter key is pressed in search add the selected layout
+  $("[data-layout-picker-search]").on("keydown", function (e) {
+    if (e.which === 13) {
+      const $selected = $(".layout-picker-item.selected");
+      if ($selected.length) {
+        addLayout($selected.data("layout"));
+
+        // clear search
+        $(this).val("");
+        showAllLayouts();
+
+        // was ctrl key also pressed?
+        if (!e.ctrlKey) {
+          // no - hide modal
+          $(".boo-acf-pb-layout-picker-container").hide();
+        }
+        // yes - continue searching
+      }
+    }
+  });
+
+  // if modal container is clicked close the modal
+  $(".boo-acf-pb-layout-picker-container").on("click", function (e) {
+    if (e.target === this) {
+      $(this).hide();
+    }
+  });
+
   const appendImagePreview = function ($el) {
     const layout = $el.data("layout");
     const imgSrc = boo_acf_pb.plugin_url + "/layouts/" + layout + ".jpg";
@@ -52,7 +228,6 @@ jQuery(function ($) {
   };
 
   const appendCodeMenu = function ($el) {
-    console.log({ $el });
     const php = [];
 
     const $fields = $el.find(".acf-field");

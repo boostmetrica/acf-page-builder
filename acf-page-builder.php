@@ -56,34 +56,16 @@ function boo_acf_pb_render_pre( $field ) {
 add_filter('acf/render_field/type=flexible_content', 'boo_acf_pb_render_post', 11, 1);
 function boo_acf_pb_render_post( $field ) {
   // only render for superadmins
-  if (!current_user_can("do_superadmin_stuff")) {
+
     echo "<style>
-    .acf-fc-layout-controls .-plus,
-    .acf-fc-layout-controls .-duplicate,
-    .acf-fc-layout-controls .-minus {
+    .acf-fc-layout-controls .-plus {
       display: none !important;
     }
     </style>";
-    echo '</div>';
-    return;
-  }
 
-    echo '<div class="boo-acf-pb-layout-picker">';
-    echo '<div class="boo-acf-pb-layout-picker-buttons">';
-    foreach ($field["layouts"] as $layout) {
-      echo '<button class="flexible-content-test" data-layout="' . $layout["name"] . '">';
-      echo '<strong>' . $layout["name"] . '</strong>';
-      echo '</button>';
-    }
-    echo '</div>';
-    echo '<div class="boo-acf-pb-layout-picker-preview">';
-     foreach ($field["layouts"] as $layout) {
-      $img_src = plugin_dir_url( __FILE__ ) . "/layouts/" . $layout["name"] . ".jpg";
-      echo '<img src="'.$img_src.'" data-layout="' . $layout["name"] . '"/>';
 
-    }
-    echo '</div>';
-    echo '</div>';
+
+
     ?>
 <div>
   <p>Presets</p>
@@ -100,8 +82,91 @@ function boo_acf_pb_render_post( $field ) {
 </div>
 <?php
 
-    echo '</div>';
 
+
+
+    // modal
+    ?>
+<button class="button button-primary" data-layout-picker-open>Add Layout</button>
+<div class='boo-acf-pb-layout-picker-container'>
+  <div class='boo-acf-pb-layout-picker-modal'>
+    <div class='header'>
+      <p class="boo-acf-pb-layout-header-text">Select a layout</p>
+      <p class="boo-acf-pb-layout-tip">Tip: Press &lt;Enter&gt; to add. &lt;Ctrl&gt; + &lt;Enter&gt; to keep going</p>
+    </div>
+    <div class='layout-picker-grid-container'>
+      <div class='layout-picker-grid'>
+        <div class="layout-picker-sidebar">
+          <div class='layout-picker-search'>
+            <input type="text" data-layout-picker-search placeholder="Search..." />
+          </div>
+
+          <div class='layout-picker-items-scrollable'>
+            <div class='layout-picker-items'>
+              <?php $i = 0;
+          foreach ($field["layouts"] as $layout) : ?>
+              <button class='layout-picker-item <?php if ($i == 0) echo "selected"; $i++ ?>'
+                data-layout='<?php echo $layout['name']; ?>'>
+                <?php echo $layout['label']; ?>
+              </button>
+
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </div>
+
+        <div class='layout-picker-previews'>
+          <div class='layout-picker-preview-container'>
+            <div class='layout-picker-preview-scrollable'>
+              <!-- <p class="preview-text">preview</p> -->
+              <?php
+        $i = 0;
+        foreach ($field["layouts"] as $layout) : ?>
+              <img class="<?php if ($i == 0) echo "selected"; $i++ ?>"
+                src='<?php echo plugin_dir_url( __FILE__ ) . "/layouts/" . $layout["name"] . ".jpg"; ?>'
+                data-layout='<?php echo $layout['name']; ?>' />
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='footer'>
+      <button class='button button-secondary' data-expand-sidebar>
+        <svg id="fi_17819458" enable-background="new 0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <path
+              d="m16 22.8h-8c-3.7 0-6.8-3-6.8-6.8v-8c0-3.7 3-6.8 6.8-6.8h8c3.7 0 6.8 3 6.8 6.8v8c0 3.7-3.1 6.8-6.8 6.8zm-8-20c-2.9 0-5.2 2.3-5.2 5.2v8c0 2.9 2.4 5.3 5.3 5.3h8c2.9 0 5.3-2.4 5.3-5.3v-8c0-2.9-2.4-5.3-5.3-5.3h-8.1z">
+            </path>
+          </g>
+          <g>
+            <path
+              d="m17 11.8c-.4 0-.8-.3-.8-.8v-3.2h-3.2c-.4 0-.8-.3-.8-.8s.3-.8.8-.8h3.5c.7 0 1.3.6 1.3 1.3v3.5c0 .4-.4.8-.8.8z">
+            </path>
+          </g>
+          <g>
+            <path
+              d="m13 11.8c-.2 0-.4-.1-.5-.2-.3-.3-.3-.8 0-1.1l3.5-3.5c.3-.3.8-.3 1.1 0s.3.8 0 1.1l-3.5 3.5c-.2.1-.4.2-.6.2z">
+            </path>
+          </g>
+          <g>
+            <path d="m11 17.8h-3.5c-.7 0-1.3-.6-1.3-1.3v-3.5c0-.4.3-.8.8-.8s.8.3.8.8v3.3h3.2c.4 0 .8.3.8.8s-.4.7-.8.7z">
+            </path>
+          </g>
+          <g>
+            <path
+              d="m7.5 17.3c-.2 0-.4-.1-.5-.2-.3-.3-.3-.8 0-1.1l3.5-3.5c.3-.3.8-.3 1.1 0s.3.8 0 1.1l-3.6 3.4c-.1.2-.3.3-.5.3z">
+            </path>
+          </g>
+        </svg>
+        <span>Expand sidebar</span>
+      </button>
+      <button class='button button-primary' data-add-layout>Add Layout</button>
+    </div>
+  </div>
+</div>
+<?php
+  echo '</div>';
 
 }
 
