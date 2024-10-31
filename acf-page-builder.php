@@ -3,7 +3,7 @@
 Plugin Name: ACF Page Builder
 Plugin URI:  https://boost.dev
 Description: Enhancements to Flexible Content
-Version:     0.0.1
+Version:     0.0.2
 Author:      boost.dev
 Author URI:  https://boost.dev
 License:     MIT
